@@ -1,7 +1,7 @@
-<mat-card>
+<mat-card class="header-card">
   <h2>Product List</h2>
 
-  <mat-form-field appearance="outline" style="width: 100%;">
+  <mat-form-field appearance="outline" class="search-field">
     <mat-label>Search Product</mat-label>
     <input matInput [(ngModel)]="searchText">
   </mat-form-field>
@@ -11,13 +11,29 @@
   </button>
 </mat-card>
 
-<br>
+<div class="product-grid">
 
-<mat-card *ngFor="let product of filteredProducts">
-  <h3>{{ product.name }}</h3>
-  <p>₹ {{ product.price }}</p>
+  <mat-card class="product-card" *ngFor="let product of filteredProducts">
 
-  <button mat-button color="primary" (click)="viewDetails(product.id)">View</button>
-  <button mat-button color="accent" (click)="editProduct(product.id)">Edit</button>
-  <button mat-button color="warn" (click)="deleteProduct(product.id)">Delete</button>
-</mat-card>
+    <h3>{{ product.name }}</h3>
+    <p class="price">₹ {{ product.price }}</p>
+
+    <div class="actions">
+
+      <button mat-icon-button color="primary" (click)="viewDetails(product.id)">
+        <mat-icon>visibility</mat-icon>
+      </button>
+
+      <button mat-icon-button color="accent" (click)="editProduct(product.id)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="deleteProduct(product.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+
+    </div>
+
+  </mat-card>
+
+</div>

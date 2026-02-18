@@ -1,11 +1,12 @@
 <mat-card *ngIf="product">
   <h2>{{ product.name }}</h2>
 
-  <p><strong>Price:</strong> ₹ {{ product.price }}</p>
-  <p><strong>Category:</strong> {{ product.category }}</p>
-  <p><strong>Description:</strong> {{ product.description }}</p>
+  <p class="details-row"><strong>Price:</strong> ₹ {{ product.price }}</p>
+  <p class="details-row"><strong>Category:</strong> {{ product.category }}</p>
+  <p class="details-row"><strong>Description:</strong> {{ product.description }}</p>
 
-  <button mat-raised-button color="primary" (click)="back()">
+  <button mat-stroked-button color="primary" (click)="back()">
+    <mat-icon>arrow_back</mat-icon>
     Back
   </button>
 </mat-card>

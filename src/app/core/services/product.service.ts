@@ -13,7 +13,10 @@ export class ProductService {
 
   private products: Product[] = [
     { id: 1, name: 'Laptop', price: 55000, category: 'Electronics', description: 'High performance laptop' },
-    { id: 2, name: 'Phone', price: 25000, category: 'Electronics', description: 'Latest smartphone' }
+    { id: 2, name: 'Phone', price: 25000, category: 'Electronics', description: 'Latest smartphone' },
+    { id: 3, name: 'Tablet', price: 35000, category: 'Electronics', description: 'Powerful tablet' },
+    { id: 4, name: 'Camera', price: 45000, category: 'Electronics', description: 'High-quality camera' },
+    { id: 5, name: 'Monitor', price: 85000, category: 'Electronics', description: 'High-resolution monitor' }
   ];
 
   getProducts() {

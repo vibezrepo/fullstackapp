@@ -1,0 +1,48 @@
+.header-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+  }
+}
+
+.search-field {
+  flex: 1;
+}
+
+button {
+  height: 56px; // aligns with mat-form-field
+  padding: 0 22px;
+  font-weight: 500;
+  border-radius: 10px;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.product-card {
+  flex: 1 1 calc(33.333% - 16px);
+  min-width: 250px;
+}
+
+.price {
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

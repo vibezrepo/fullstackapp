@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-
 import { ProductService } from '../../core/services/product.service';
+import { RouterModule } from '@angular/router';
 
 @Component({
   standalone: true,
@@ -15,11 +14,13 @@ import { ProductService } from '../../core/services/product.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatInputModule,
     MatButtonModule
   ],
-  templateUrl: './product-form.component.html'
+  templateUrl: './product-form.component.html',
+  styleUrls: ['./product-form.component.scss']
 })
 export class ProductFormComponent {
 
@@ -33,7 +34,6 @@ export class ProductFormComponent {
     private router: Router
   ) {
 
-    // ✅ Initialize form AFTER fb injection
     this.productForm = this.fb.group({
       id: [0],
       name: ['', Validators.required],

@@ -13,7 +13,7 @@ import { MatListModule } from '@angular/material/list';
         <h2>About This Application</h2>
 
         <p>
-          This Angular 19 POC demonstrates modern Angular architecture & concepts.
+          This Angular 19 demonstrates modern Angular architecture & concepts.
         </p>
 
         <mat-list>

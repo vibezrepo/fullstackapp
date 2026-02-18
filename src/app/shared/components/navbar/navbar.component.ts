@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   imports: [MatToolbarModule, MatButtonModule, RouterLink, CommonModule],
   template: `
     <mat-toolbar color="primary">
-      <span>Angular 19 POC</span>
+      <span>Angular</span>
       <span class="spacer"></span>
 
       <button mat-button routerLink="/">Home</button>
@@ -20,7 +20,7 @@ import { CommonModule } from '@angular/common';
         Products
       </button>
 
-      <button mat-button routerLink="/about">
+      <button mat-button routerLink="/" *ngIf="auth.isLoggedIn()">
         About
       </button>
 
