@@ -1,0 +1,88 @@
+.header-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+
+  h2 {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+  }
+}
+
+.search-field {
+  flex: 1;
+}
+
+button {
+  height: 56px; // aligns with mat-form-field
+  padding: 0 22px;
+  font-weight: 500;
+  border-radius: 10px;
+}
+
+.product-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Shared row layout */
+.row-layout {
+  display: flex;
+  align-items: center;
+}
+
+/* Columns */
+.col {
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+/* Column sizing */
+.name {
+  flex: 2;
+  font-weight: 600;
+}
+
+.price {
+  flex: 1;
+  color: #555;
+}
+
+.category {
+  flex: 1.2;
+  color: #777;
+}
+
+.actions,
+.actions-header {
+  flex: 0.8;
+  display: flex;
+  gap: 4px;
+  justify-content: flex-end;
+}
+
+/* Header styling */
+.table-header {
+  background: #f5f5f5;
+  font-weight: 600;
+  border-radius: 10px;
+}
+
+/* Row styling */
+.product-card {
+  border-radius: 10px;
+  transition: 0.2s ease;
+}
+
+/* Hover effect */
+.product-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
