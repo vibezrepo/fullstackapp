@@ -14,7 +14,7 @@ import { CommonModule } from '@angular/common';
       <span>Angular</span>
       <span class="spacer"></span>
 
-      <button mat-button routerLink="/">Home</button>
+      <button mat-button routerLink="/" *ngIf="auth.isLoggedIn()">Home</button>
 
       <button mat-button routerLink="/products" *ngIf="auth.isLoggedIn()">
         Products

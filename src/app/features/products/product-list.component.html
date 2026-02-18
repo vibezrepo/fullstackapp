@@ -13,27 +13,53 @@
 
 <div class="product-grid">
 
+  <mat-card class="table-header">
+
+    <div class="row-layout">
+      <div class="col name">Product Name</div>
+      <div class="col price">Price</div>
+      <div class="col category">Category</div>
+      <div class="col actions-header">Actions</div>
+    </div>
+
+  </mat-card>
+
+  <!-- Data Rows -->
   <mat-card class="product-card" *ngFor="let product of filteredProducts">
 
-    <h3>{{ product.name }}</h3>
-    <p class="price">₹ {{ product.price }}</p>
+    <div class="row-layout">
 
-    <div class="actions">
+      <div class="col name">
+        {{ product.name }}
+      </div>
 
-      <button mat-icon-button color="primary" (click)="viewDetails(product.id)">
-        <mat-icon>visibility</mat-icon>
-      </button>
+      <div class="col price">
+        ₹ {{ product.price }}
+      </div>
 
-      <button mat-icon-button color="accent" (click)="editProduct(product.id)">
-        <mat-icon>edit</mat-icon>
-      </button>
+      <div class="col category">
+        {{ product.category }}
+      </div>
 
-      <button mat-icon-button color="warn" (click)="deleteProduct(product.id)">
-        <mat-icon>delete</mat-icon>
-      </button>
+      <div class="col actions">
+
+        <button mat-icon-button color="primary" (click)="viewDetails(product.id)">
+          <mat-icon>visibility</mat-icon>
+        </button>
+
+        <button mat-icon-button color="accent" (click)="editProduct(product.id)">
+          <mat-icon>edit</mat-icon>
+        </button>
+
+        <button mat-icon-button color="warn" (click)="deleteProduct(product.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+
+      </div>
 
     </div>
 
   </mat-card>
 
 </div>
+
