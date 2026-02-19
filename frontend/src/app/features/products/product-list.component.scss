@@ -40,3 +40,14 @@ button {
 mat-form-field {
   flex: 1;
 }
+
+
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 4px solid #c62828;
+}

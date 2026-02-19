@@ -1,101 +1,61 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
+
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
+  selector: 'app-register',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
-    MatFormFieldModule,
     MatInputModule,
     MatButtonModule
   ],
-  template: `
-    <div class="center">
-      <mat-card class="card">
-
-        <h2>Create Account</h2>
-
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Email</mat-label>
-          <input matInput [(ngModel)]="email" required email>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" [(ngModel)]="password" required>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Confirm Password</mat-label>
-          <input matInput type="password" [(ngModel)]="confirmPassword" required>
-        </mat-form-field>
-
-        <div class="error" *ngIf="showError">
-          {{errorMessage}}
-        </div>
-
-        <button mat-raised-button color="primary" class="full" (click)="register()">
-          Register
-        </button>
-
-      </mat-card>
-    </div>
-  `,
-  styles: [`
-    .center {
-      display: flex;
-      justify-content: center;
-      margin-top: 60px;
-    }
-
-    .card {
-      width: 400px;
-      padding: 20px;
-    }
-
-    .full {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-
-    .error {
-      color: red;
-      margin-bottom: 10px;
-    }
-  `]
+  templateUrl: './register.component.html',
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
 
-  email = '';
-  password = '';
-  confirmPassword = '';
+  loading = false;
+  errorMsg = '';
+  registerForm: any;
 
-  showError = false;
-  errorMessage = '';
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+
+  this.registerForm = this.fb.group({
+    name: ['', Validators.required],
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, Validators.minLength(4)]]
+  });}
 
   register() {
 
-    if (!this.email || !this.password || !this.confirmPassword) {
-      this.errorMessage = 'All fields are required';
-      this.showError = true;
-      return;
-    }
+    if (this.registerForm.invalid) return;
 
-    if (this.password !== this.confirmPassword) {
-      this.errorMessage = 'Passwords do not match';
-      this.showError = true;
-      return;
-    }
+    this.loading = true;
+    this.errorMsg = '';
 
-    this.showError = false;
-    alert('Registration Successful ✅');
+    this.authService.register(this.registerForm.value).subscribe({
+      next: () => {
+        this.loading = false;
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err.error?.message || 'Registration failed';
+      }
+    });
   }
 }

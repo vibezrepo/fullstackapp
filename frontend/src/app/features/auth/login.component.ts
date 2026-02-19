@@ -1,91 +1,67 @@
 import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { MatCardModule } from '@angular/material/card';
-import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 
 import { AuthService } from '../../core/services/auth.service';
-import { CommonModule } from '@angular/common';
 
 @Component({
+  selector: 'app-login',
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     MatCardModule,
-    MatFormFieldModule,
     MatInputModule,
     MatButtonModule
   ],
-  template: `
-    <div class="center">
-      <mat-card class="card">
-
-        <h2>Sign In</h2>
-
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Username</mat-label>
-          <input matInput [(ngModel)]="username" required>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" [(ngModel)]="password" required>
-        </mat-form-field>
-
-        <div class="error" *ngIf="showError">
-          Please enter username & password
-        </div>
-
-        <button mat-raised-button color="primary" class="full" (click)="login()">
-          Login
-        </button>
-
-      </mat-card>
-    </div>
-  `,
-  styles: [`
-    .center {
-      display: flex;
-      justify-content: center;
-      margin-top: 60px;
-    }
-
-    .card {
-      width: 400px;
-      padding: 20px;
-    }
-
-    .full {
-      width: 100%;
-      margin-bottom: 15px;
-    }
-
-    .error {
-      color: red;
-      margin-bottom: 10px;
-    }
-  `]
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
 
-  username = '';
-  password = '';
-  showError = false;
+  loading = false;
+  errorMsg = '';
+  loginForm: any;
 
-  constructor(private auth: AuthService, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router
+  ) {
+
+  this.loginForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', Validators.required]
+  });
+}
 
   login() {
-    if (!this.username || !this.password) {
-      this.showError = true;
-      return;
-    }
 
-    this.showError = false;
-    this.auth.login();
-    this.router.navigate(['/products']);
+    if (this.loginForm.invalid) return;
+
+    this.loading = true;
+    this.errorMsg = '';
+
+    this.authService.login(this.loginForm.value).subscribe({
+      next: (res: any) => {
+        this.loading = false;
+        res.token = "fake-jwt-token"
+
+        if (res.token) {
+          this.authService.saveToken(res.token);
+        }
+
+        this.router.navigate(['/products']);
+      },
+      error: (err) => {
+        this.loading = false;
+        this.errorMsg = err.error?.message ? 'Invalid credentials' : 'An error occurred';
+      }
+    });
   }
 }

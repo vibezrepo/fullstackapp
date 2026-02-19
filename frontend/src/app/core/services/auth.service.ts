@@ -1,43 +1,58 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 
-@Injectable({ providedIn: 'root' })
+export interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  token: string;
+  username: string;
+}
+
+@Injectable({
+  providedIn: 'root'
+})
 export class AuthService {
 
-  private authState = new BehaviorSubject<boolean>(false);
-  authState$ = this.authState.asObservable();
+  private apiUrl = `${environment.apiUrl}/auth`;
 
-  private isBrowser: boolean;
+  constructor(private http: HttpClient,@Inject(PLATFORM_ID) private platformId: Object) {}
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  login(data: LoginRequest): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, data);
+  }
 
-    this.isBrowser = isPlatformBrowser(this.platformId);
+  register(data: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register`, data);
+  }
 
-    // ✅ SAFE localStorage access
-    if (this.isBrowser) {
-      const stored = localStorage.getItem('loggedIn');
-      if (stored === 'true') {
-        this.authState.next(true);
-      }
+  saveToken(token: string) {
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem('token', token);
     }
   }
 
-  login() {
-    if (this.isBrowser) {
-      localStorage.setItem('loggedIn', 'true');
+  private isBrowser(): boolean {
+    return typeof window !== 'undefined';
+  }
+  
+  getToken(): string | null {
+    if (this.isBrowser()) {
+      return localStorage.getItem('token');
     }
-    this.authState.next(true);
+    return null;
   }
 
   logout() {
-    if (this.isBrowser) {
-      localStorage.removeItem('loggedIn');
-    }
-    this.authState.next(false);
+    localStorage.removeItem('token');
   }
 
   isLoggedIn(): boolean {
-    return this.authState.value;
+    return !!this.getToken();
   }
 }

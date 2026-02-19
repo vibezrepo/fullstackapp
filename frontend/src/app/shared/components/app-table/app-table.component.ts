@@ -22,9 +22,9 @@ export class AppTableComponent {
   @Input() columns: any[] = [];
   @Input() data: any[] = [];
 
-  @Output() view = new EventEmitter<number>();
-  @Output() edit = new EventEmitter<number>();
-  @Output() delete = new EventEmitter<number>();
+  @Output() view = new EventEmitter<any>();
+  @Output() edit = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
 
   get displayedColumns(): string[] {
     return [...this.columns.map(c => c.key), 'actions'];

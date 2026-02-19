@@ -38,11 +38,11 @@
 
       <div class="actions">
 
-        <button mat-stroked-button color="primary" routerLink="/products">
+        <button mat-stroked-button type="button" (click)="cancel()">
           Cancel
         </button>
 
-        <button mat-raised-button color="primary" (click)="save()">
+        <button mat-raised-button color="primary" type="button" (click)="save()">
           Save
         </button>
 

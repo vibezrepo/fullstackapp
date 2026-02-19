@@ -1,34 +1,41 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
 import { MatCardModule } from '@angular/material/card';
-import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { MatIconModule } from '@angular/material/icon';
-import { ProductService, Product } from '../../core/services/product.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 import { AppTableComponent } from '../../shared/components/app-table/app-table.component';
+import { ProductService } from '../../core/services/product.service';
+import { Product } from '../../core/models/product.model';
 
 @Component({
-  standalone: true,
   selector: 'app-product-list',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
-    RouterModule,
-    ReactiveFormsModule,
-    AppTableComponent,
     MatCardModule,
-    MatButtonModule,
     MatInputModule,
-    MatIconModule
+    MatButtonModule,
+    MatProgressSpinnerModule,
+    AppTableComponent
   ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
 })
-export class ProductListComponent {
+export class ProductListComponent implements OnInit, OnDestroy {
+
   products: Product[] = [];
+  filteredProducts: Product[] = [];
   searchText = '';
+  isLoading = false;
+  errorMessage = '';
 
   columns = [
     { key: 'name', label: 'Product Name' },
@@ -36,33 +43,75 @@ export class ProductListComponent {
     { key: 'category', label: 'Category' }
   ];
 
+  private destroy$ = new Subject<void>();
+
   constructor(
     private productService: ProductService,
     private router: Router
-  ) {
-    this.products = this.productService.getProducts();
+  ) {}
+
+  ngOnInit(): void {
+    this.loadProducts();
   }
 
-  get filteredProducts() {
-    return this.products.filter(p =>
-      p.name.toLowerCase().includes(this.searchText.toLowerCase())
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  loadProducts(): void {
+    this.isLoading = true;
+    this.errorMessage = '';
+    
+    this.productService.getProducts()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          console.log('API DATA →', data);
+          this.products = data;
+          this.filteredProducts = data;
+          this.isLoading = false;
+        },
+        error: (error) => {
+          console.error('Error fetching products:', error);
+          this.errorMessage = 'Failed to load products. Please try again.';
+          this.isLoading = false;
+        }
+      });
+  }
+
+
+  search(): void {
+    this.filteredProducts = this.products.filter(p =>
+      p.name?.toLowerCase().includes(this.searchText.toLowerCase()) ||
+      p.price?.toString().includes(this.searchText.toLowerCase()) ||
+      p.category?.toLowerCase().includes(this.searchText.toLowerCase())
     );
   }
 
-  addProduct() {
+  addProduct(): void {
     this.router.navigate(['/add']);
   }
 
-  editProduct(id: number) {
-    this.router.navigate(['/edit', id]);
+  onView(product: Product): void {
+    this.router.navigate(['/details', product.id]);
   }
 
-  viewDetails(id: number) {
-    this.router.navigate(['/details', id]);
+  onEdit(product: Product): void {
+    this.router.navigate(['/edit', product.id]);
   }
 
-  deleteProduct(id: number) {
-    this.productService.deleteProduct(id);
-    this.products = this.productService.getProducts();
+  onDelete(product: Product): void {
+    this.productService.deleteProduct(product.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loadProducts();
+        },
+        error: (error) => {
+          console.error('Error deleting product:', error);
+          this.errorMessage = 'Failed to delete product. Please try again.';
+        }
+      });
   }
 }

@@ -1,29 +1,33 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+
 import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+
 import { ProductService } from '../../core/services/product.service';
-import { RouterModule } from '@angular/router';
+import { Product } from '../../core/models/product.model';
 
 @Component({
   standalone: true,
   selector: 'app-product-form',
+
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterModule,
     MatCardModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    MatFormFieldModule
   ],
+
   templateUrl: './product-form.component.html',
   styleUrls: ['./product-form.component.scss']
 })
-export class ProductFormComponent {
-
+export class ProductFormComponent implements OnInit {
   productForm: any;
   isEdit = false;
 
@@ -33,39 +37,46 @@ export class ProductFormComponent {
     private route: ActivatedRoute,
     private router: Router
   ) {
+    
 
-    this.productForm = this.fb.group({
-      id: [0],
-      name: ['', Validators.required],
-      price: [0, [Validators.required, Validators.min(1)]],
-      category: ['', Validators.required],
-      description: ['', Validators.required]
-    });
+  this.productForm = this.fb.group({
+    id: [null as number | null],
+    name: ['', Validators.required],
+    price: [0, [Validators.required, Validators.min(1)]],
+    category: ['', Validators.required],
+    description: ['', Validators.required]
+  });
+  }
 
+  ngOnInit() {
     const id = this.route.snapshot.params['id'];
 
     if (id) {
       this.isEdit = true;
-      const product = this.productService.getProductById(+id);
-      if (product) {
+
+      this.productService.getProductById(+id).subscribe(product => {
         this.productForm.patchValue(product);
-      }
+      });
     }
   }
 
   save() {
-
     if (this.productForm.invalid) return;
 
-    const product = this.productForm.value;
+    const product = this.productForm.value as Product;
 
     if (this.isEdit) {
-      this.productService.updateProduct(product);
+      this.productService.updateProduct(product).subscribe(() => {
+        this.router.navigate(['/products']);
+      });
     } else {
-      product.id = Date.now();
-      this.productService.addProduct(product);
+      this.productService.addProduct(product).subscribe(() => {
+        this.router.navigate(['/products']);
+      });
     }
+  }
 
+  cancel() {
     this.router.navigate(['/products']);
   }
 }

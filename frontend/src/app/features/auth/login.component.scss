@@ -1,0 +1,29 @@
+.auth-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+}
+
+.auth-card {
+  width: 400px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.full {
+  width: 100%;
+}
+mat-form-field {
+  width: 100%;
+}
+
+button {
+  margin-top: 10px;
+}
+
+.error {
+  color: red;
+  font-size: 14px;
+}
