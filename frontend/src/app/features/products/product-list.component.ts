@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { ProductService, Product } from '../../core/services/product.service';
+import { AppTableComponent } from '../../shared/components/app-table/app-table.component';
 
 @Component({
   standalone: true,
@@ -16,6 +17,7 @@ import { ProductService, Product } from '../../core/services/product.service';
     FormsModule,
     RouterModule,
     ReactiveFormsModule,
+    AppTableComponent,
     MatCardModule,
     MatButtonModule,
     MatInputModule,
@@ -27,6 +29,12 @@ import { ProductService, Product } from '../../core/services/product.service';
 export class ProductListComponent {
   products: Product[] = [];
   searchText = '';
+
+  columns = [
+    { key: 'name', label: 'Product Name' },
+    { key: 'price', label: 'Price' },
+    { key: 'category', label: 'Category' }
+  ];
 
   constructor(
     private productService: ProductService,

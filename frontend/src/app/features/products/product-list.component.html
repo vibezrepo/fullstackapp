@@ -11,55 +11,10 @@
   </button>
 </mat-card>
 
-<div class="product-grid">
-
-  <mat-card class="table-header">
-
-    <div class="row-layout">
-      <div class="col name">Product Name</div>
-      <div class="col price">Price</div>
-      <div class="col category">Category</div>
-      <div class="col actions-header">Actions</div>
-    </div>
-
-  </mat-card>
-
-  <!-- Data Rows -->
-  <mat-card class="product-card" *ngFor="let product of filteredProducts">
-
-    <div class="row-layout">
-
-      <div class="col name">
-        {{ product.name }}
-      </div>
-
-      <div class="col price">
-        ₹ {{ product.price }}
-      </div>
-
-      <div class="col category">
-        {{ product.category }}
-      </div>
-
-      <div class="col actions">
-
-        <button mat-icon-button color="primary" (click)="viewDetails(product.id)">
-          <mat-icon>visibility</mat-icon>
-        </button>
-
-        <button mat-icon-button color="accent" (click)="editProduct(product.id)">
-          <mat-icon>edit</mat-icon>
-        </button>
-
-        <button mat-icon-button color="warn" (click)="deleteProduct(product.id)">
-          <mat-icon>delete</mat-icon>
-        </button>
-
-      </div>
-
-    </div>
-
-  </mat-card>
-
-</div>
-
+<app-table
+  [columns]="columns"
+  [data]="filteredProducts"
+  (view)="viewDetails($event)"
+  (edit)="editProduct($event)"
+  (delete)="deleteProduct($event)">
+</app-table>
