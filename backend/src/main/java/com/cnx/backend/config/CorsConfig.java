@@ -13,9 +13,20 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("*");
+
+                registry.addMapping("/**")
+                        .allowedOrigins("http://localhost:4200")
+                        .allowedMethods("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders(
+                            "Content-Type",
+                            "Authorization",
+                            "Referer",
+                            "sec-ch-ua",
+                            "sec-ch-ua-mobile",
+                            "sec-ch-ua-platform"
+                        )
+                        .allowCredentials(true)
+                        .maxAge(3600);;
             }
         };
     }

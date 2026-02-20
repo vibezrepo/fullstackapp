@@ -50,7 +50,6 @@ export class LoginComponent {
     this.authService.login(this.loginForm.value).subscribe({
       next: (res: any) => {
         this.loading = false;
-        res.token = "fake-jwt-token"
 
         if (res.token) {
           this.authService.saveToken(res.token);
