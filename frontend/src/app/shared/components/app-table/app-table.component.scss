@@ -15,3 +15,6 @@ th.mat-header-cell {
 td.mat-cell, th.mat-header-cell {
   padding: 12px 16px;
 }
+
+/* when actions are hidden, remove extra space at end */
+:host ::ng-deep table { width: auto; }

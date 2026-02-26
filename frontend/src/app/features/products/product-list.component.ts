@@ -9,10 +9,13 @@ import { MatCardModule } from '@angular/material/card';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AppTableComponent } from '../../shared/components/app-table/app-table.component';
 import { ProductService } from '../../core/services/product.service';
 import { Product } from '../../core/models/product.model';
+import { CartService } from '../../core/services/cart.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-product-list',
@@ -24,7 +27,8 @@ import { Product } from '../../core/models/product.model';
     MatInputModule,
     MatButtonModule,
     MatProgressSpinnerModule,
-    AppTableComponent
+    AppTableComponent,
+    MatSnackBarModule
   ],
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.scss']
@@ -47,7 +51,9 @@ export class ProductListComponent implements OnInit, OnDestroy {
 
   constructor(
     private productService: ProductService,
-    private router: Router
+    private router: Router,
+    private cartService: CartService,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -113,5 +119,17 @@ export class ProductListComponent implements OnInit, OnDestroy {
           this.errorMessage = 'Failed to delete product. Please try again.';
         }
       });
+  }
+
+  onAddToCart(product: Product): void {
+    this.cartService.addToCart(product.id, 1).pipe(takeUntil(this.destroy$)).subscribe({
+      next: () => {
+        this.snackBar.open(`${product.name} added to cart`, 'Close', { duration: 2500 });
+      },
+      error: (err) => {
+        console.error('Add to cart failed', err);
+        this.snackBar.open('Failed to add to cart', 'Close', { duration: 2500 });
+      }
+    });
   }
 }

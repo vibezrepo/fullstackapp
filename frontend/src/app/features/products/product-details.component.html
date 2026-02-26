@@ -1,4 +1,4 @@
-<div class="details-container" *ngIf="product">
+<div class="details-container" *ngIf="product$ | async as product">
 
   <mat-card class="details-card">
 
@@ -14,9 +14,41 @@
       <p>{{ product.description }}</p>
     </div>
 
-    <button mat-stroked-button class="back-btn" (click)="back()">
-      Back
-    </button>
+    <!-- Quantity Selector -->
+    <div class="quantity-section">
+      <label for="quantity"><strong>Quantity:</strong></label>
+      <div class="quantity-controls">
+        <button mat-icon-button (click)="decrementQuantity()" [disabled]="quantity <= 1">
+          −
+        </button>
+        <input 
+          id="quantity"
+          type="number" 
+          [(ngModel)]="quantity" 
+          min="1" 
+          class="quantity-input"
+        />
+        <button mat-icon-button (click)="incrementQuantity()">
+          +
+        </button>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        class="add-to-cart-btn"
+        (click)="addToCart(product)"
+        [disabled]="isAddingToCart || !product"
+      >
+        {{ isAddingToCart ? 'Adding...' : 'Add to Cart' }}
+      </button>
+      <button mat-stroked-button class="back-btn" (click)="back()">
+        Back
+      </button>
+    </div>
 
   </mat-card>
 

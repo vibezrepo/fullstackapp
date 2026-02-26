@@ -1,15 +1,17 @@
 <mat-card class="header-card">
 
-    <h2>Product List</h2>
+    <h2 class="title">Product List</h2>
 
-    <mat-form-field appearance="outline">
-      <mat-label>Search Product</mat-label>
-      <input matInput [(ngModel)]="searchText" (input)="search()">
-    </mat-form-field>
+    <div class="header-actions">
+      <mat-form-field class="search-field" appearance="outline">
+        <mat-label>Search Product</mat-label>
+        <input matInput [(ngModel)]="searchText" (input)="search()">
+      </mat-form-field>
 
-  <button mat-raised-button color="primary" (click)="addProduct()">
-    Add Product
-  </button>
+      <button mat-raised-button color="primary" (click)="addProduct()">
+        Add Product
+      </button>
+    </div>
 
 </mat-card>
 
@@ -27,5 +29,6 @@
   [data]="filteredProducts"
   (view)="onView($event)"
   (edit)="onEdit($event)"
-  (delete)="onDelete($event)">
+  (delete)="onDelete($event)"
+  (addToCart)="onAddToCart($event)">
 </app-table>

@@ -1,11 +1,26 @@
-.header-card {
+.header-card1 {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 20px;
   padding: 20px 24px;
   margin-bottom: 20px;
 
-  h2 {
+  /* make search bar take remaining space but keep title and button visible */
+  > .title {
+    flex: 0 0 auto;
+  }
+  > .search-field {
+    flex: 1 1 auto;
+    max-width: 400px;
+    margin: 0 20px;
+    padding-top: 20px;
+  }
+  > button {
+    flex: 0 0 auto;
+  }
+
+  h2.title {
     margin: 0;
     font-size: 22px;
     font-weight: 600;
@@ -14,9 +29,6 @@
   }
 }
 
-.search-field {
-  flex: 1;
-}
 
 button {
   height: 56px; // aligns with mat-form-field
@@ -40,6 +52,77 @@ button {
 mat-form-field {
   flex: 1;
 }
+
+.error-message {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  border-left: 4px solid #c62828;
+}
+
+.header-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap; /* keep elements in one row */
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+
+  h2.title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    white-space: nowrap;
+  }
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  min-width: 0; /* allow shrinking */
+}
+
+.search-field {
+  flex: 1 1 200px;
+  min-width: 150px;
+  max-width: 400px;
+  padding-top: 20px;
+}
+
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+
+.product-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+mat-form-field {
+  flex: 1;
+}
+
 
 
 

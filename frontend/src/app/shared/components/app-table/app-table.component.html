@@ -16,7 +16,7 @@
     </ng-container>
 
     <!-- Actions Column -->
-    <ng-container matColumnDef="actions">
+    <ng-container *ngIf="showActions" matColumnDef="actions">
 
       <th mat-header-cell *matHeaderCellDef> Actions </th>
 
@@ -32,6 +32,10 @@
 
         <button mat-icon-button color="warn" (click)="delete.emit(element)">
           <mat-icon>delete</mat-icon>
+        </button>
+
+        <button mat-icon-button color="primary" (click)="addToCart.emit(element)" matTooltip="Add to cart">
+          <mat-icon>add_shopping_cart</mat-icon>
         </button>
 
       </td>

@@ -21,12 +21,19 @@ export class AppTableComponent {
 
   @Input() columns: any[] = [];
   @Input() data: any[] = [];
+  // allow parent to hide the actions column when not needed
+  @Input() showActions: boolean = true;
 
   @Output() view = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();
+  @Output() addToCart = new EventEmitter<any>();
 
   get displayedColumns(): string[] {
-    return [...this.columns.map(c => c.key), 'actions'];
+    const cols = [...this.columns.map(c => c.key)];
+    if (this.showActions) {
+      cols.push('actions');
+    }
+    return cols;
   }
 }
