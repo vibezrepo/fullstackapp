@@ -3,8 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
-import { environment } from '../../../environments/environment';
-import { Cart, CartItem } from '../models/cart.model';
+import { environment } from '../../../../environments/environment';
+import { Cart } from '../models/cart.model';
 
 interface AddToCartRequest {
   productId: number;

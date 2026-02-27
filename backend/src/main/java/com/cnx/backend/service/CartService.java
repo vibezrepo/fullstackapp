@@ -13,7 +13,6 @@ import com.cnx.backend.entity.User;
 import com.cnx.backend.repository.CartRepository;
 import com.cnx.backend.repository.CartItemRepository;
 import com.cnx.backend.repository.ProductRepository;
-import com.cnx.backend.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
@@ -27,7 +26,6 @@ public class CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
     /**
      * Get or create cart for a user

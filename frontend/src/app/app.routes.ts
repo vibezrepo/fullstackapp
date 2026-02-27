@@ -1,13 +1,13 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core/guards/auth.guard';
+import { authGuard } from './shared/auth/guards/auth.guard';
 
 import { WelcomeComponent } from './features/welcome/welcome.component';
-import { ProductListComponent } from './features/products/product-list.component';
+import { ProductListComponent } from './features/products/ProductListComponent/product-list.component';
 import { ProductFormComponent } from './features/products/product-form.component';
-import { ProductDetailsComponent } from './features/products/product-details.component';
+import { ProductDetailsComponent } from './features/products/ProductDetailsComponent/product-details.component';
 import { CartComponent } from './features/cart/cart.component';
-import { LoginComponent } from './features/auth/login.component';
-import { RegisterComponent } from './features/auth/register.component';
+import { LoginComponent } from './shared/authentication/LoginComponent/login.component';
+import { RegisterComponent } from './shared/authentication/RegisterComponent/register.component';
 
 export const routes: Routes = [
   { path: '', component: WelcomeComponent },

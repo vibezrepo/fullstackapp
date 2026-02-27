@@ -11,10 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { AppTableComponent } from '../../shared/components/app-table/app-table.component';
-import { ProductService } from '../../core/services/product.service';
-import { Product } from '../../core/models/product.model';
-import { CartService } from '../../core/services/cart.service';
+import { AppTableComponent } from '../../../shared/components/app-table/app-table.component';
+import { ProductService } from '../services/product.service';
+import { Product } from '../models/product.model';
+import { CartService } from '../.../../../cart/services/cart.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({

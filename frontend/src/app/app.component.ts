@@ -4,8 +4,6 @@ import { CommonModule } from '@angular/common';
 
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
-
-// import { NavbarComponent } from './shared/components/navbar.component';
 import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({

@@ -9,8 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { CartService } from '../../core/services/cart.service';
-import { Cart, CartItem } from '../../core/models/cart.model';
+import { CartService } from '../cart/services/cart.service';
+import { Cart, CartItem } from './models/cart.model';
 import { AppTableComponent } from '../../shared/components/app-table/app-table.component';
 
 @Component({

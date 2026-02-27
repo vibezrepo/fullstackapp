@@ -10,9 +10,9 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { ProductService } from '../../core/services/product.service';
-import { CartService } from '../../core/services/cart.service';
-import { Product } from '../../core/models/product.model';
+import { ProductService } from '../services/product.service';
+import { CartService } from '../../cart/services/cart.service';
+import { Product } from '../models/product.model';
 
 @Component({
   standalone: true,
