@@ -1,10 +1,11 @@
 import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { tap, distinctUntilChanged } from 'rxjs/operators';
 import { isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../../environments/environment';
 import { Cart } from '../models/cart.model';
+import { AuthService } from '../../../shared/auth/services/auth.service';
 
 interface AddToCartRequest {
   productId: number;
@@ -17,18 +18,21 @@ interface AddToCartRequest {
 export class CartService {
 
   private apiUrl = `${environment.apiUrl}/cart`;
-  
-  // BehaviorSubject for reactive cart updates with automatic change detection
+
+  private cartVersion = 0;
+
+  private bumpVersion(): number {
+    return ++this.cartVersion;
+  }
+
   private cartSubject = new BehaviorSubject<Cart>({
     id: 0,
     items: [],
     totalPrice: 0
   });
 
-  // Observable stream for components to subscribe to
   public cart$ = this.cartSubject.asObservable();
 
-  // Observable for cart item count
   public cartItemCount$ = this.cart$.pipe(
     tap(cart => {
       // Automatically emits when cart changes
@@ -37,54 +41,78 @@ export class CartService {
 
   constructor(
     private http: HttpClient,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private authService: AuthService
   ) {
-    // Initialize cart on service creation only in browser
-    this.loadCart();
+    this.authService.authState$
+      .pipe(
+        distinctUntilChanged()
+      )
+      .subscribe(isLoggedIn => {
+        if (isLoggedIn) {
+
+          this.reloadCart().subscribe({
+            error: err => {
+              console.error('Error reloading cart after login', err);
+            }
+          });
+        } else {
+          this.cartSubject.next({
+            id: 0,
+            items: [],
+            totalPrice: 0
+          });
+        }
+      });
   }
 
-  /**
-   * Load cart from backend - only loads in browser environment
-   */
   loadCart(): void {
-    // Only load cart in browser environment to avoid SSR issues
     if (!isPlatformBrowser(this.platformId)) {
       return;
     }
 
+    const ver = this.bumpVersion();
+
     this.http.get<Cart>(this.apiUrl).subscribe({
       next: (cart) => {
         console.log('Cart loaded successfully:', cart);
-        this.cartSubject.next(cart);
+        if (ver === this.cartVersion) {
+          this.cartSubject.next(cart);
+        } else {
+          console.log('stale loadCart response ignored');
+        }
       },
       error: (err) => {
         console.error('Failed to load cart:', err);
         console.error('Error status:', err.status);
         console.error('Error message:', err.message);
         
-        // Check if error is due to authentication
         if (err.status === 401 || err.status === 403) {
           console.warn('Cart requires authentication. User may not be logged in.');
         }
         
         // Initialize with empty cart on error
-        this.cartSubject.next({
-          id: 0,
-          items: [],
-          totalPrice: 0
-        });
+        if (ver === this.cartVersion) {
+          this.cartSubject.next({
+            id: 0,
+            items: [],
+            totalPrice: 0
+          });
+        }
       }
     });
   }
 
-  /**
-   * Reload cart from backend
-   */
   reloadCart(): Observable<Cart> {
+    const ver = this.bumpVersion();
     return this.http.get<Cart>(this.apiUrl).pipe(
       tap(cart => {
         console.log('Cart reloaded successfully:', cart);
-        this.cartSubject.next(cart);
+        if (ver === this.cartVersion) {
+          this.cartSubject.next(cart);
+        } else {
+          console.log('stale reloadCart response ignored');
+        }
       }),
       tap(
         () => { /* success */ },
@@ -94,11 +122,13 @@ export class CartService {
           console.error('Message:', err.message);
           
           // Still update with empty cart on error
-          this.cartSubject.next({
-            id: 0,
-            items: [],
-            totalPrice: 0
-          });
+          if (ver === this.cartVersion) {
+            this.cartSubject.next({
+              id: 0,
+              items: [],
+              totalPrice: 0
+            });
+          }
         }
       )
     );
@@ -123,10 +153,13 @@ export class CartService {
    */
   addToCart(productId: number, quantity: number = 1): Observable<Cart> {
     const request: AddToCartRequest = { productId, quantity };
+    const ver = this.bumpVersion();
     return this.http.post<Cart>(`${this.apiUrl}/add`, request).pipe(
       tap(cart => {
-        // Update BehaviorSubject which triggers change detection
-        this.cartSubject.next(cart);
+        // only update if this response is not stale
+        if (ver === this.cartVersion) {
+          this.cartSubject.next(cart);
+        }
       })
     );
   }
@@ -135,10 +168,12 @@ export class CartService {
    * Remove item from cart
    */
   removeFromCart(cartItemId: number): Observable<Cart> {
+    const ver = this.bumpVersion();
     return this.http.delete<Cart>(`${this.apiUrl}/items/${cartItemId}`).pipe(
       tap(cart => {
-        // Update BehaviorSubject which triggers change detection
-        this.cartSubject.next(cart);
+        if (ver === this.cartVersion) {
+          this.cartSubject.next(cart);
+        }
       })
     );
   }
@@ -147,12 +182,14 @@ export class CartService {
    * Update cart item quantity
    */
   updateQuantity(cartItemId: number, quantity: number): Observable<Cart> {
+    const ver = this.bumpVersion();
     return this.http.put<Cart>(`${this.apiUrl}/items/${cartItemId}/quantity`, null, {
       params: { quantity: quantity.toString() }
     }).pipe(
       tap(cart => {
-        // Update BehaviorSubject which triggers change detection
-        this.cartSubject.next(cart);
+        if (ver === this.cartVersion) {
+          this.cartSubject.next(cart);
+        }
       })
     );
   }
@@ -161,14 +198,17 @@ export class CartService {
    * Clear entire cart
    */
   clearCart(): Observable<void> {
+    const ver = this.bumpVersion();
     return this.http.delete<void>(this.apiUrl).pipe(
       tap(() => {
-        // Reset cart
-        this.cartSubject.next({
-          id: 0,
-          items: [],
-          totalPrice: 0
-        });
+        if (ver === this.cartVersion) {
+          // Reset cart
+          this.cartSubject.next({
+            id: 0,
+            items: [],
+            totalPrice: 0
+          });
+        }
       })
     );
   }
