@@ -27,6 +27,10 @@ describe('CartService', () => {
 
     service = TestBed.inject(CartService);
     httpMock = TestBed.inject(HttpTestingController);
+
+    
+    const initial = httpMock.match(apiUrl);
+    initial.forEach(req => req.flush({ id: 0, items: [], totalPrice: 0 } as any));
   });
 
   afterEach(() => {
@@ -38,8 +42,7 @@ describe('CartService', () => {
     service.reloadCart().subscribe();
     service.reloadCart().subscribe();
 
-    const req1 = httpMock.expectOne(apiUrl);
-    const req2 = httpMock.expectOne(apiUrl);
+    const [req1, req2] = httpMock.match(apiUrl);
 
     // reply to second request first with a cart containing one item
     const cartWithItem: Cart = { id: 1, items: [{ id: 1, productId: 2, quantity: 1, price: 5 }], totalPrice: 5 } as any;
