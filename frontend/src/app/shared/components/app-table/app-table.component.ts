@@ -24,6 +24,9 @@ export class AppTableComponent {
   // allow parent to hide the actions column when not needed
   @Input() showActions: boolean = true;
 
+  // allow custom templates for specific column cells (keyed by column.key)
+  @Input() cellTemplates: { [key: string]: any } = {};
+
   @Output() view = new EventEmitter<any>();
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<any>();

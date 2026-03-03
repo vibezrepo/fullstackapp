@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of, throwError } from 'rxjs';
+import { By } from '@angular/platform-browser';
 
 import { CartComponent } from './cart.component';
 import { CartService } from './services/cart.service';
@@ -101,9 +102,19 @@ describe('CartComponent', () => {
     expect(component.getCartItemCount(null)).toBe(0);
   });
 
-  it('increments item quantity', () => {
+  it('increments item quantity programmatically', () => {
     component.incrementQuantity(mockItem);
 
+    expect(cartServiceSpy.updateQuantity).toHaveBeenCalledWith(11, 3);
+  });
+
+  it('increment button in template calls method', () => {
+    fixture.detectChanges();
+    const qtyEl = fixture.debugElement.query(By.css('.quantity-control'));
+    expect(qtyEl).toBeTruthy();
+    const buttons = qtyEl.queryAll(By.css('button'));
+    const incButton = buttons[1]; // second button
+    incButton.triggerEventHandler('click', null);
     expect(cartServiceSpy.updateQuantity).toHaveBeenCalledWith(11, 3);
   });
 
@@ -121,6 +132,24 @@ describe('CartComponent', () => {
     component.decrementQuantity(mockItem);
 
     expect(cartServiceSpy.updateQuantity).toHaveBeenCalledWith(11, 1);
+  });
+
+  it('decrement button in template calls method', () => {
+    fixture.detectChanges();
+    const qtyEl = fixture.debugElement.query(By.css('.quantity-control'));
+    const buttons = qtyEl.queryAll(By.css('button'));
+    const decButton = buttons[0];
+    decButton.triggerEventHandler('click', null);
+    expect(cartServiceSpy.updateQuantity).toHaveBeenCalledWith(11, 1);
+  });
+
+  it('remove button in subtotal cell calls removeItem', () => {
+    fixture.detectChanges();
+    const subEl = fixture.debugElement.query(By.css('.subtotal-cell'));
+    expect(subEl).toBeTruthy();
+    const removeBtn = subEl.query(By.css('.delete-btn'));
+    removeBtn.triggerEventHandler('click', null);
+    expect(cartServiceSpy.removeFromCart).toHaveBeenCalledWith(11);
   });
 
   it('does not decrement quantity when already one', () => {

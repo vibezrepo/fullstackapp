@@ -49,11 +49,37 @@ import { AppTableComponent } from '../../shared/components/app-table/app-table.c
 
           <!-- Cart Items Table - Using Shared App Table Component -->
           <div *ngIf="cart.items && cart.items.length > 0" class="cart-content">
-            <app-table 
+            <!-- table with quantity controls template -->
+          <app-table 
               [columns]="tableColumns" 
               [data]="cart.items"
               [showActions]="false"
-            ></app-table>
+              [cellTemplates]="{ quantity: quantityCell, subtotal: subtotalCell }"
+            >
+          </app-table>
+
+          <!-- template for quantity column with increment/decrement -->
+          <ng-template #quantityCell let-item>
+            <div class="quantity-control">
+              <button mat-icon-button color="primary" (click)="decrementQuantity(item)">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty-value">{{ item.quantity }}</span>
+              <button mat-icon-button color="primary" (click)="incrementQuantity(item)">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+          </ng-template>
+
+          <!-- template for subtotal column with delete button at end -->
+          <ng-template #subtotalCell let-item>
+            <div class="subtotal-cell">
+              ₹ {{ item.subtotal | number:'1.2-2' }}
+              <button mat-icon-button color="warn" class="delete-btn" (click)="removeItem(item.id)" matTooltip="Remove">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </ng-template>
 
             <!-- Cart Summary -->
             <div class="cart-summary">
@@ -138,6 +164,32 @@ import { AppTableComponent } from '../../shared/components/app-table/app-table.c
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .qty-value {
+      width: 32px;
+      text-align: center;
+      display: inline-block;
+    }
+
+    .quantity-control button[color="warn"] {
+      margin-left: 8px;
+    }
+
+    .subtotal-cell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .subtotal-cell .delete-btn {
+      margin-left: 8px;
     }
 
     .cart-summary {

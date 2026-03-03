@@ -84,7 +84,11 @@ public class CartService {
      */
     public CartDto removeFromCart(User user, Long cartItemId) {
         Cart cart = getOrCreateCart(user);
-        cartItemRepository.deleteById(cartItemId);
+        // remove item from both repository and cart's collection to avoid merge of deleted instance
+        cartItemRepository.findById(cartItemId).ifPresent(item -> {
+            cart.getItems().remove(item);
+            cartItemRepository.delete(item);
+        });
         cart.setUpdatedAt(LocalDateTime.now());
         cartRepository.save(cart);
         return convertToDto(cart);
@@ -99,6 +103,8 @@ public class CartService {
                 .orElseThrow(() -> new RuntimeException("Cart item not found"));
 
         if (quantity <= 0) {
+            // remove from cart collection before deleting to keep Hibernate session consistent
+            cart.getItems().remove(item);
             cartItemRepository.delete(item);
         } else {
             item.setQuantity(quantity);
