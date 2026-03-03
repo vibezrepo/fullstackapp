@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.5% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>1/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/6</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">12.5% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>1/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -107,28 +107,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { Injectable } from '@angular/core';
@@ -141,28 +141,28 @@ import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class ProductService {
 &nbsp;
-  private apiUrl = <span class="cstat-no" title="statement not covered" >`${environment.apiUrl}/products`;</span>
+  private apiUrl = `${environment.apiUrl}/products`;
 &nbsp;
-<span class="fstat-no" title="function not covered" >  constructor(private <span class="cstat-no" title="statement not covered" >h</span>ttp: HttpClient)</span> {}
+  constructor(private http: HttpClient) {}
 &nbsp;
-<span class="fstat-no" title="function not covered" >  getProducts(</span>): Observable&lt;Product[]&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.http.get&lt;Product[]&gt;(this.apiUrl);</span>
+  getProducts(): Observable&lt;Product[]&gt; {
+    return this.http.get&lt;Product[]&gt;(this.apiUrl);
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  getProductById(</span>id: number): Observable&lt;Product&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.http.get&lt;Product&gt;(`${this.apiUrl}/${id}`);</span>
+  getProductById(id: number): Observable&lt;Product&gt; {
+    return this.http.get&lt;Product&gt;(`${this.apiUrl}/${id}`);
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  addProduct(</span>product: Product): Observable&lt;Product&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.http.post&lt;Product&gt;(this.apiUrl, product);</span>
+  addProduct(product: Product): Observable&lt;Product&gt; {
+    return this.http.post&lt;Product&gt;(this.apiUrl, product);
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  updateProduct(</span>product: Product): Observable&lt;Product&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.http.put&lt;Product&gt;(`${this.apiUrl}/${product.id}`, product);</span>
+  updateProduct(product: Product): Observable&lt;Product&gt; {
+    return this.http.put&lt;Product&gt;(`${this.apiUrl}/${product.id}`, product);
   }
 &nbsp;
-<span class="fstat-no" title="function not covered" >  deleteProduct(</span>id: number): Observable&lt;void&gt; {
-<span class="cstat-no" title="statement not covered" >    return this.http.delete&lt;void&gt;(`${this.apiUrl}/${id}`);</span>
+  deleteProduct(id: number): Observable&lt;void&gt; {
+    return this.http.delete&lt;void&gt;(`${this.apiUrl}/${id}`);
   }
 }
 &nbsp;</pre></td></tr></table></pre>
@@ -172,7 +172,7 @@ export class ProductService {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-02T11:47:06.307Z
+                at 2026-03-03T05:54:03.118Z
             </div>
         <script src="../../../../prettify.js"></script>
         <script>

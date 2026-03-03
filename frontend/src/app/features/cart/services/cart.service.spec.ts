@@ -45,7 +45,11 @@ describe('CartService', () => {
     const [req1, req2] = httpMock.match(apiUrl);
 
     // reply to second request first with a cart containing one item
-    const cartWithItem: Cart = { id: 1, items: [{ id: 1, productId: 2, quantity: 1, price: 5 }], totalPrice: 5 } as any;
+    const cartWithItem: Cart = {
+      id: 1,
+      items: [{ id: 1, productId: 2, productName: 'Test', productPrice: 5, quantity: 1, subtotal: 5 }],
+      totalPrice: 5
+    } as any;
     req2.flush(cartWithItem);
     expect(service.getCartItemCount()).toBe(1);
 
@@ -67,7 +71,11 @@ describe('CartService', () => {
     const addReq = httpMock.expectOne(`${apiUrl}/add`);
 
     // respond to add request with cart having one entry
-    const addedCart: Cart = { id: 1, items: [{ id: 5, productId: 42, quantity: 2, price: 10 }], totalPrice: 20 } as any;
+    const addedCart: Cart = {
+      id: 1,
+      items: [{ id: 5, productId: 42, productName: 'X', productPrice: 10, quantity: 2, subtotal: 20 }],
+      totalPrice: 20
+    } as any;
     addReq.flush(addedCart);
     expect(service.getCartItemCount()).toBe(2);
 
@@ -75,4 +83,71 @@ describe('CartService', () => {
     reloadReq.flush({ id: 1, items: [], totalPrice: 0 } as any);
     expect(service.getCartItemCount()).toBe(2); // still correct
   });
+
+  it('loadCart sets empty cart on server error', () => {
+    service['cartSubject'].next({
+      id: 9,
+      items: [{ id: 1, productId: 1, productName: 'A', productPrice: 1, quantity: 1, subtotal: 1 }],
+      totalPrice: 1
+    });
+    service.loadCart();
+    const req = httpMock.expectOne(apiUrl);
+    req.flush({ message: 'bad' }, { status: 401, statusText: 'Unauthorized' });
+    expect(service.getCart()).toEqual({ id: 0, items: [], totalPrice: 0 });
+  });
+
+  it('removeFromCart should send delete and update cart', () => {
+    const fakeCart: Cart = { id: 2, items: [], totalPrice: 0 } as any;
+    service.removeFromCart(33).subscribe(cart => expect(cart).toEqual(fakeCart));
+    const req = httpMock.expectOne(`${apiUrl}/items/33`);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(fakeCart);
+    expect(service.getCart()).toEqual(fakeCart);
+  });
+
+  it('updateQuantity should PUT and emit new cart', () => {
+    const fakeCart: Cart = { id: 3, items: [], totalPrice: 0 } as any;
+    service.updateQuantity(12, 7).subscribe(cart => expect(cart).toEqual(fakeCart));
+    const req = httpMock.expectOne(`${apiUrl}/items/12/quantity?quantity=7`);
+    expect(req.request.method).toBe('PUT');
+    req.flush(fakeCart);
+    expect(service.getCart()).toEqual(fakeCart);
+  });
+
+  it('clearCart resets the subject and returns void', () => {
+    service['cartSubject'].next({
+      id: 5,
+      items: [{ id: 1, productId: 1, productName: 'A', productPrice: 1, quantity: 1, subtotal: 1 }],
+      totalPrice: 1
+    });
+    service.clearCart().subscribe(() => {
+      expect(service.getCart()).toEqual({ id: 0, items: [], totalPrice: 0 });
+    });
+    const req = httpMock.expectOne(apiUrl);
+    expect(req.request.method).toBe('DELETE');
+    req.flush(null);
+  });
+
+  it('getCart$ returns observable stream', done => {
+    let sub: any;
+    sub = service.getCart$().subscribe(c => {
+      expect(c).toBeDefined();
+      sub.unsubscribe();
+      done();
+    });
+  });
+
+  it('synchronous getters reflect current state', () => {
+    // set custom cart
+    const cart: Cart = {
+      id: 10,
+      items: [{ id: 1, productId: 2, productName: 'B', productPrice: 4, quantity: 3, subtotal: 12 }],
+      totalPrice: 12
+    } as any;
+    service['cartSubject'].next(cart);
+    expect(service.getCart()).toEqual(cart);
+    expect(service.getCartItemCount()).toBe(3);
+    expect(service.getTotalPrice()).toBe(12);
+  });
+
 });
