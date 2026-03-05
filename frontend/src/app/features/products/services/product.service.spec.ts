@@ -81,11 +81,13 @@ describe('ProductService', () => {
 
   it('deleteProduct should DELETE to correct url', () => {
     service.deleteProduct(3).subscribe(res => {
-      expect(res).toBeUndefined();
+      // HttpClient will emit null for void responses from the backend
+      expect(res).toBeNull();
     });
 
     const req = httpMock.expectOne(`${apiUrl}/3`);
     expect(req.request.method).toBe('DELETE');
-    req.flush(null);
+    // server responds with no content
+    req.flush(null, { status: 204, statusText: 'No Content' });
   });
 });

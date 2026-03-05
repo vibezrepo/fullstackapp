@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { of, BehaviorSubject } from 'rxjs';
 import { RouterTestingModule } from '@angular/router/testing';
 import { By } from '@angular/platform-browser';
+import { MatBadge } from '@angular/material/badge';
 
 // simple stubs
 class FakeAuthService {
@@ -67,10 +68,17 @@ describe('NavbarComponent', () => {
     auth.setLoggedIn(true);
     cart.setCart({ items: [{ quantity: 2 }] });
     fixture.detectChanges();
+    // run another cycle to ensure async pipe has emitted
+    fixture.detectChanges();
+
     expect(fixture.debugElement.query(By.css('button[routerLink="/products"]'))).toBeTruthy();
     expect(fixture.debugElement.query(By.css('button[routerLink="/cart"]'))).toBeTruthy();
-    const badge = fixture.debugElement.query(By.css('button[routerLink="/cart"]')).nativeElement.getAttribute('matbadge');
-    expect(badge).toBe('2');
+
+    // inspect the MatBadge directive instance rather than DOM element
+    const badgeDebug = fixture.debugElement.query(By.directive(MatBadge));
+    expect(badgeDebug).toBeTruthy();
+    const badgeInst = badgeDebug.injector.get(MatBadge);
+    expect(badgeInst.content).toBe('2');
   });
 
   it('getCartItemCount handles undefined or null or empty arrays', () => {

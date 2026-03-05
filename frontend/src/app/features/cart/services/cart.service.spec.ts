@@ -129,10 +129,9 @@ describe('CartService', () => {
   });
 
   it('getCart$ returns observable stream', done => {
-    let sub: any;
-    sub = service.getCart$().subscribe(c => {
+    // just verify emission; no explicit unsubscribe required for this one-off test
+    service.getCart$().subscribe(c => {
       expect(c).toBeDefined();
-      sub.unsubscribe();
       done();
     });
   });

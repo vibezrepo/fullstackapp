@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cnx.backend.dto.AddToCartRequest;
 import com.cnx.backend.dto.CartDto;
 import com.cnx.backend.dto.CartItemDto;
+import com.cnx.backend.dto.CheckoutRequest;
 import com.cnx.backend.entity.Cart;
 import com.cnx.backend.entity.CartItem;
 import com.cnx.backend.entity.Product;
@@ -152,5 +153,23 @@ public class CartService {
         dto.setQuantity(item.getQuantity());
         dto.setSubtotal(item.getSubtotal());
         return dto;
+    }
+
+    /**
+     * Perform checkout for the user. Currently this simply clears the cart;
+     * in a real application this could create an order record, send an email, etc.
+     */
+    public void checkout(User user) {
+        // placeholder business logic without details
+        clearCart(user);
+    }
+
+    /**
+     * Checkout with details; stores or logs the request for processing.
+     */
+    public void checkout(User user, com.cnx.backend.dto.CheckoutRequest request) {
+        // In a real app, we'd create Order entity here. For now just log.
+        System.out.println("Processing checkout for user " + user.getEmail() + "; request=" + request);
+        clearCart(user);
     }
 }

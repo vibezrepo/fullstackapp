@@ -207,6 +207,19 @@ describe('CartComponent', () => {
     });
   });
 
+  it('navigates to checkout when checkout button clicked', () => {
+    fixture.detectChanges();
+    const btn = fixture.debugElement.query(By.css('.checkout-btn'));
+    expect(btn).toBeTruthy();
+    btn.triggerEventHandler('click', null);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/checkout']);
+  });
+
+  it('goToCheckout method triggers navigation', () => {
+    component.goToCheckout();
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/checkout']);
+  });
+
   it('navigates to products on continue shopping', () => {
     component.continueShopping();
 

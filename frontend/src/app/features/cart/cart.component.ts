@@ -99,6 +99,7 @@ import { AppTableComponent } from '../../shared/components/app-table/app-table.c
                 mat-raised-button 
                 color="primary"
                 class="checkout-btn"
+                (click)="goToCheckout()"
               >
                 Proceed to Checkout
               </button>
@@ -344,5 +345,12 @@ export class CartComponent implements OnInit {
    */
   continueShopping(): void {
     this.router.navigate(['/products']);
+  }
+
+  /**
+   * Navigate to checkout page
+   */
+  goToCheckout(): void {
+    this.router.navigate(['/checkout']);
   }
 }

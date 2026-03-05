@@ -1,0 +1,128 @@
+<div class="checkout-container">
+  <mat-card class="checkout-card">
+    <h2>Checkout</h2>
+
+    <div *ngIf="errorMessage" class="error-message">
+      <mat-icon>error</mat-icon>
+      <span>{{ errorMessage }}</span>
+    </div>
+
+    <mat-horizontal-stepper #stepper linear>
+      <!-- Step 1: address form -->
+      <mat-step [stepControl]="addressForm">
+        <form [formGroup]="addressForm">
+          <ng-template matStepLabel>Address</ng-template>
+
+          <div class="address-fields">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" required />
+              <mat-error *ngIf="addressForm.controls['name'].hasError('required')">
+                Name is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Street</mat-label>
+              <input matInput formControlName="street" required />
+              <mat-error *ngIf="addressForm.controls['street'].hasError('required')">
+                Street is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>City</mat-label>
+              <input matInput formControlName="city" required />
+              <mat-error *ngIf="addressForm.controls['city'].hasError('required')">
+                City is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>State</mat-label>
+              <input matInput formControlName="state" required />
+              <mat-error *ngIf="addressForm.controls['state'].hasError('required')">
+                State is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>ZIP</mat-label>
+              <input matInput formControlName="zip" required />
+              <mat-error *ngIf="addressForm.controls['zip'].hasError('required')">
+                ZIP code is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Country</mat-label>
+              <input matInput formControlName="country" required />
+              <mat-error *ngIf="addressForm.controls['country'].hasError('required')">
+                Country is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="step-buttons">
+            <button mat-button matStepperNext [disabled]="addressForm.invalid">Next</button>
+          </div>
+        </form>
+      </mat-step>
+
+      <!-- Step 2: order summary -->
+      <mat-step>
+        <ng-template matStepLabel>Summary</ng-template>
+        <div *ngIf="(cart$ | async) as cart">
+          <app-table
+            [columns]="tableColumns"
+            [data]="cart.items"
+            [showActions]="false"
+            [cellTemplates]="{ quantity: quantityCell, subtotal: subtotalCell }"
+          ></app-table>
+
+          <ng-template #quantityCell let-item>
+            {{ item.quantity }}
+          </ng-template>
+          <ng-template #subtotalCell let-item>
+            ₹ {{ item.subtotal | number:'1.2-2' }}
+          </ng-template>
+
+          <div class="order-summary">
+            <div class="summary-row">
+              <span class="summary-label">Total Items:</span>
+              <span class="summary-value">{{ cart.items.length }}</span>
+            </div>
+            <div class="summary-row total">
+              <span class="summary-label">Total Price:</span>
+              <span class="summary-value">₹ {{ cart.totalPrice | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="summary-step-buttons">
+          <button mat-button matStepperPrevious>Back</button>
+          <button mat-button matStepperNext>Next</button>
+        </div>
+      </mat-step>
+
+      <!-- Step 3: payment and confirm -->
+      <mat-step [stepControl]="paymentForm">
+        <form [formGroup]="paymentForm">
+          <ng-template matStepLabel>Payment</ng-template>
+          <mat-radio-group formControlName="method">
+            <mat-radio-button value="cod">Cash on Delivery</mat-radio-button>
+            <mat-radio-button value="card">Credit/Debit Card</mat-radio-button>
+          </mat-radio-group>
+          <mat-error *ngIf="paymentForm.controls['method'].hasError('required')">
+            Please select payment method
+          </mat-error>
+          <div class="action-buttons">
+            <button mat-button matStepperPrevious>Back</button>
+            <button mat-raised-button color="primary" (click)="confirmOrder()" [disabled]="paymentForm.invalid">
+              Place Order
+            </button>
+          </div>
+        </form>
+      </mat-step>
+    </mat-horizontal-stepper>
+  </mat-card>
+</div>

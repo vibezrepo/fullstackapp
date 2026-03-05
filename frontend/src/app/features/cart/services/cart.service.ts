@@ -117,9 +117,6 @@ export class CartService {
       tap(
         () => { /* success */ },
         (err) => {
-          console.error('Failed to reload cart:', err);
-          console.error('Status:', err.status);
-          console.error('Message:', err.message);
           
           // Still update with empty cart on error
           if (ver === this.cartVersion) {
