@@ -1,6 +1,7 @@
 package com.cnx.backend.controller;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -69,6 +70,20 @@ public class CheckoutControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json("{\"message\":\"Order placed successfully\"}"));
 
-        verify(cartService).checkout(user, any(CheckoutRequest.class));
+        // first arg use eq matcher so Mockito doesn't complain
+        verify(cartService).checkout(eq(user), any(CheckoutRequest.class));
+
+        // now stub order summaries and invoke GET
+        com.cnx.backend.dto.OrderSummaryDto summary = new com.cnx.backend.dto.OrderSummaryDto();
+        summary.setUserEmail("test@example.com");
+        summary.setPaymentMethod("cod");
+        summary.setAddress(new AddressDto());
+        summary.getAddress().setCity("City");
+        summary.setItems(java.util.List.of());
+        when(cartService.getOrderSummaries(eq(user))).thenReturn(java.util.List.of(summary));
+
+        mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/checkout/orders"))
+                .andExpect(status().isOk())
+                .andExpect(content().json("[{\"userEmail\":\"test@example.com\",\"paymentMethod\":\"cod\",\"address\":{\"city\":\"City\"},\"items\":[]}]"));
     }
 }

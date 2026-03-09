@@ -74,6 +74,8 @@ export class ProductDetailsComponent implements OnInit {
           'Close',
           { duration: 3000 }
         );
+        // redirect user back to product list after adding
+        this.router.navigate(['/products']);
       },
       error: (error) => {
         this.isAddingToCart = false;

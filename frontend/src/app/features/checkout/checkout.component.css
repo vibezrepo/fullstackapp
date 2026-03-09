@@ -98,3 +98,11 @@ h2 {
   justify-content: space-between;
   margin-top: 20px;
 }
+
+/* card payment fields spacing */
+.card-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin: 16px 20px;
+}

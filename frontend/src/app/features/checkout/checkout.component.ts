@@ -72,7 +72,29 @@ export class CheckoutComponent implements OnInit {
     });
 
     this.paymentForm = this.fb.group({
-      method: ['cod', Validators.required]
+      method: ['cod', Validators.required],
+      cardNumber: [''],
+      cardExpiry: [''],
+      cardCvv: ['']
+    });
+
+    // require card fields only when payment method is card
+    this.paymentForm.get('method')?.valueChanges.subscribe(m => {
+      const num = this.paymentForm.get('cardNumber');
+      const exp = this.paymentForm.get('cardExpiry');
+      const cvv = this.paymentForm.get('cardCvv');
+      if (m === 'card') {
+        num?.setValidators([Validators.required]);
+        exp?.setValidators([Validators.required]);
+        cvv?.setValidators([Validators.required]);
+      } else {
+        num?.clearValidators();
+        exp?.clearValidators();
+        cvv?.clearValidators();
+      }
+      num?.updateValueAndValidity();
+      exp?.updateValueAndValidity();
+      cvv?.updateValueAndValidity();
     });
 
     this.cartService.reloadCart().subscribe({
@@ -92,10 +114,19 @@ export class CheckoutComponent implements OnInit {
 
   confirmOrder(): void {
     // build payload from forms and cart data
-    const payload = {
+    const payload: any = {
       address: this.addressForm.value,
       paymentMethod: this.paymentForm.value.method
-    } as any;
+    };
+
+    // include card details if needed
+    if (payload.paymentMethod === 'card') {
+      payload.card = {
+        number: this.paymentForm.value.cardNumber,
+        expiry: this.paymentForm.value.cardExpiry,
+        cvv: this.paymentForm.value.cardCvv
+      };
+    }
 
     this.checkoutService.confirmOrder(payload).subscribe({
       next: () => {

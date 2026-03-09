@@ -1,6 +1,13 @@
 package com.cnx.backend.controller;
 
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.time.LocalDateTime;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
+import com.cnx.backend.exception.ResourceNotFoundException;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,8 +52,27 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id) {
-        productService.delete(id);
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        try {
+            productService.delete(id);
+            return ResponseEntity.noContent().build();
+        } catch (ResourceNotFoundException rnfe) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rnfe.getMessage());
+        } catch (IllegalStateException ex) {
+            // data integrity or reference issue
+            Map<String, Object> body = new HashMap<>();
+            body.put("timestamp", LocalDateTime.now());
+            body.put("error", "Data Integrity Error");
+            body.put("message", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        } catch (InvalidDataAccessApiUsageException ex) {
+            // generic misuse of repository API
+            Map<String, Object> body = new HashMap<>();
+            body.put("timestamp", LocalDateTime.now());
+            body.put("error", "Invalid data request");
+            body.put("message", ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
     }
 }
 

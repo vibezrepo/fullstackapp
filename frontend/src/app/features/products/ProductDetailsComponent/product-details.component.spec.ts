@@ -77,7 +77,7 @@ describe('ProductDetailsComponent', () => {
     expect(cartServiceSpy.addToCart).not.toHaveBeenCalled();
   });
 
-  it('adds to cart successfully, resets quantity, and shows snackbar', () => {
+  it('adds to cart successfully, resets quantity, shows snackbar and navigates back', () => {
     component.quantity = 3;
     cartServiceSpy.addToCart.and.returnValue(of({} as any));
 
@@ -89,6 +89,7 @@ describe('ProductDetailsComponent', () => {
     expect(snackBarOpenSpy).toHaveBeenCalledWith('Headphones added to cart!', 'Close', {
       duration: 3000
     });
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/products']);
   });
 
   it('handles add to cart failure and shows error snackbar', () => {

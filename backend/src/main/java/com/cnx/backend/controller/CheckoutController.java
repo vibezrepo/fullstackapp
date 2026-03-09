@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import com.cnx.backend.dto.CheckoutRequest;
 import com.cnx.backend.entity.User;
 import com.cnx.backend.repository.UserRepository;
 import com.cnx.backend.service.CartService;
+import com.cnx.backend.dto.OrderSummaryDto;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,10 +31,21 @@ public class CheckoutController {
     @PostMapping
     public Map<String, String> checkout(@RequestBody CheckoutRequest request) {
         User user = getCurrentUser();
-        // normally we'd persist order details, here we just log them
+        // require card fields when method is card
+        if ("card".equalsIgnoreCase(request.getPaymentMethod())) {
+            if (request.getCard() == null) {
+                throw new IllegalArgumentException("Card details required for card payment");
+            }
+        }
         System.out.println("Checkout payload: " + request);
         cartService.checkout(user, request);
         return Collections.singletonMap("message", "Order placed successfully");
+    }
+
+    @GetMapping("/orders")
+    public java.util.List<OrderSummaryDto> myOrders() {
+        User user = getCurrentUser();
+        return cartService.getOrderSummaries(user);
     }
 
     private User getCurrentUser() {

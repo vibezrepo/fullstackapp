@@ -6,4 +6,5 @@ import lombok.Data;
 public class CheckoutRequest {
     private AddressDto address;
     private String paymentMethod;
+    private CardDto card;          // optional, required when paymentMethod == "card"
 }

@@ -46,7 +46,8 @@ public class SecurityConfig {
                 "/auth/**",
                 "/v3/api-docs/**",
                 "/swagger-ui/**",
-                "/swagger-ui.html"
+                "/swagger-ui.html",
+                "/api/products/**"        // allow product endpoints for demo
             ).permitAll()
 
             .anyRequest().authenticated()

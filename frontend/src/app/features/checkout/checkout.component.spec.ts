@@ -73,11 +73,12 @@ describe('CheckoutComponent', () => {
     expect(component.paymentForm).toBeDefined();
   });
 
-  it('navigates to products after successful order with payload', () => {
+  it('navigates to products after successful order with COD payload', () => {
     component.addressForm = fb.group({
       name: ['John'], street: ['X'], city: ['C'], state: ['S'], zip: ['123'], country: ['Country']
     });
-    component.paymentForm = fb.group({ method: ['cod'] });
+    // recreate payment form same as component logic
+    component.paymentForm = fb.group({ method: ['cod'], cardNumber: [''], cardExpiry: [''], cardCvv: [''] });
 
     component.confirmOrder();
     expect(checkoutServiceSpy.confirmOrder).toHaveBeenCalledWith({
@@ -86,6 +87,31 @@ describe('CheckoutComponent', () => {
     });
     expect(snackBarOpenSpy).toHaveBeenCalledWith('Order placed successfully', 'Close', { duration: 3000 });
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/products']);
+  });
+
+  it('requires card details when card payment selected and includes them in payload', () => {
+    component.addressForm = fb.group({
+      name: ['Alice'], street: ['Y'], city: ['Z'], state: ['T'], zip: ['456'], country: ['Country']
+    });
+    component.paymentForm = fb.group({ method: ['card'], cardNumber: ['4444222233331111'], cardExpiry: ['12/25'], cardCvv: ['123'] });
+
+    component.confirmOrder();
+    expect(checkoutServiceSpy.confirmOrder).toHaveBeenCalledWith({
+      address: component.addressForm.value,
+      paymentMethod: 'card',
+      card: {
+        number: '4444222233331111',
+        expiry: '12/25',
+        cvv: '123'
+      }
+    });
+    expect(snackBarOpenSpy).toHaveBeenCalledWith('Order placed successfully', 'Close', { duration: 3000 });
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/products']);
+  });
+
+  it('payment form invalid when card selected but details missing', () => {
+    component.paymentForm = fb.group({ method: ['card'], cardNumber: [''], cardExpiry: [''], cardCvv: [''] });
+    expect(component.paymentForm.invalid).toBeTrue();
   });
   it('shows error snackbar when checkout fails', () => {
     checkoutServiceSpy.confirmOrder.and.returnValue(throwError(() => new Error('fail')));

@@ -115,6 +115,31 @@
           <mat-error *ngIf="paymentForm.controls['method'].hasError('required')">
             Please select payment method
           </mat-error>
+
+          <div *ngIf="paymentForm.get('method')?.value === 'card'" class="card-details">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Card Number</mat-label>
+              <input matInput formControlName="cardNumber" />
+              <mat-error *ngIf="paymentForm.controls['cardNumber'].hasError('required')">
+                Card number is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Expiry Date</mat-label>
+              <input matInput formControlName="cardExpiry" placeholder="MM/YY" />
+              <mat-error *ngIf="paymentForm.controls['cardExpiry'].hasError('required')">
+                Expiry date is required
+              </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>CVV</mat-label>
+              <input matInput formControlName="cardCvv" type="password" />
+              <mat-error *ngIf="paymentForm.controls['cardCvv'].hasError('required')">
+                CVV is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+
           <div class="action-buttons">
             <button mat-button matStepperPrevious>Back</button>
             <button mat-raised-button color="primary" (click)="confirmOrder()" [disabled]="paymentForm.invalid">
