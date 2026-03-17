@@ -10,9 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.cnx.backend.dto.CheckoutRequest;
 import com.cnx.backend.dto.AddressDto;
+import com.cnx.backend.entity.Order;
 import com.cnx.backend.entity.User;
 import com.cnx.backend.service.CartService;
 import com.cnx.backend.repository.UserRepository;
+
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -56,6 +59,10 @@ public class CheckoutControllerTest {
         user.setEmail("test@example.com");
         when(userRepository.findByEmail("test@example.com")).thenReturn(java.util.Optional.of(user));
 
+        Order order = new Order();
+        order.setInvoiceDate(LocalDateTime.now());
+        when(cartService.checkout(eq(user), any(CheckoutRequest.class))).thenReturn(order);
+
         CheckoutRequest req = new CheckoutRequest();
         AddressDto addr = new AddressDto();
         addr.setCity("City");
@@ -68,7 +75,7 @@ public class CheckoutControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json))
                 .andExpect(status().isOk())
-                .andExpect(content().json("{\"message\":\"Order placed successfully\"}"));
+                .andExpect(content().json("{\"message\":\"Order placed successfully\"}", false));
 
         // first arg use eq matcher so Mockito doesn't complain
         verify(cartService).checkout(eq(user), any(CheckoutRequest.class));
@@ -84,6 +91,6 @@ public class CheckoutControllerTest {
 
         mvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get("/api/checkout/orders"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"userEmail\":\"test@example.com\",\"paymentMethod\":\"cod\",\"address\":{\"city\":\"City\"},\"items\":[]}]"));
+                .andExpect(content().json("[{\"userEmail\":\"test@example.com\",\"paymentMethod\":\"cod\",\"address\":{\"city\":\"City\"},\"items\":[]}]", false));
     }
 }

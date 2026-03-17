@@ -1,0 +1,74 @@
+<mat-card class="dialog-card" *ngIf="order">
+  <div class="dialog-header">
+    <div>
+      <h2>Order #{{ order.id }}</h2>
+      <p class="status">Status: {{ order.status || 'PENDING' }}</p>
+    </div>
+    <button mat-icon-button (click)="dialogRef.close()" aria-label="Close">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="meta">
+    <p *ngIf="order.invoiceDate">Invoice: {{ order.invoiceDate }}</p>
+    <p *ngIf="order.pickDate">Pick up: {{ order.pickDate }}</p>
+    <p *ngIf="order.deliveryDate">Delivery: {{ order.deliveryDate }}</p>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="section">
+    <h3>Payment</h3>
+    <p>{{ order.paymentMethod | titlecase }}</p>
+    <p *ngIf="order.cardLast4">Card: •••• {{ order.cardLast4 }} (exp {{ order.cardExpiry }})</p>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="section">
+    <h3>Address</h3>
+    <p *ngIf="order.address.name">{{ order.address.name }}</p>
+    <p *ngIf="order.address.street">{{ order.address.street }}</p>
+    <p *ngIf="order.address.city">{{ order.address.city }}, {{ order.address.state }} {{ order.address.zip }}</p>
+    <p *ngIf="order.address.country">{{ order.address.country }}</p>
+  </div>
+
+  <mat-divider></mat-divider>
+
+  <div class="section">
+    <h3>Items</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let item of order.items">
+        <span matLine>{{ item.productName }}</span>
+        <span matLine class="secondary">Qty: {{ item.quantity }}</span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+  <div class="actions">
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="setStatus('CONFIRMED')"
+      [disabled]="order.status === 'CONFIRMED'"
+    >
+      Confirm Order
+    </button>
+    <button
+      mat-raised-button
+      color="accent"
+      (click)="setStatus('OUT_FOR_DELIVERY')"
+      [disabled]="order.status === 'OUT_FOR_DELIVERY'"
+    >
+      Out for Delivery
+    </button>
+    <button
+      mat-raised-button
+      color="warn"
+      (click)="setStatus('OUT_OF_STOCK')"
+      [disabled]="order.status === 'OUT_OF_STOCK'"
+    >
+      Out of Stock
+    </button>
+  </div>
+</mat-card>

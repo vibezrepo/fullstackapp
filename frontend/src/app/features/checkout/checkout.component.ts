@@ -6,7 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, AbstractControl, ValidatorFn } from '@angular/forms';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 import { CartService } from '../cart/services/cart.service';
 import { CheckoutService } from './services/checkout.service';
@@ -30,6 +32,8 @@ import { MatRadioModule } from '@angular/material/radio';
     MatStepperModule,
     MatFormFieldModule,
     MatInputModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
     MatRadioModule,
     AppTableComponent
   ],
@@ -40,6 +44,12 @@ import { MatRadioModule } from '@angular/material/radio';
 export class CheckoutComponent implements OnInit {
   cart$: Observable<Cart>;
   errorMessage = '';
+
+  // limit date pickers to today or earlier
+  maxDate = new Date();
+
+  // invoice date is assigned after successful order placement
+  invoiceDate?: string;
 
   addressForm!: FormGroup;
   paymentForm!: FormGroup;
@@ -68,7 +78,9 @@ export class CheckoutComponent implements OnInit {
       city: ['', Validators.required],
       state: ['', Validators.required],
       zip: ['', Validators.required],
-      country: ['', Validators.required]
+      country: ['', Validators.required],
+      pickDate: [null, this.noFutureDateValidator(this.maxDate)],
+      deliveryDate: [null, this.noFutureDateValidator(this.maxDate)]
     });
 
     this.paymentForm = this.fb.group({
@@ -119,6 +131,15 @@ export class CheckoutComponent implements OnInit {
       paymentMethod: this.paymentForm.value.method
     };
 
+    const pickDate: Date | null = this.addressForm.value.pickDate;
+    if (pickDate) {
+      payload.pickDate = this.formatDate(pickDate);
+    }
+    const deliveryDate: Date | null = this.addressForm.value.deliveryDate;
+    if (deliveryDate) {
+      payload.deliveryDate = this.formatDate(deliveryDate);
+    }
+
     // include card details if needed
     if (payload.paymentMethod === 'card') {
       payload.card = {
@@ -129,8 +150,13 @@ export class CheckoutComponent implements OnInit {
     }
 
     this.checkoutService.confirmOrder(payload).subscribe({
-      next: () => {
-        this.snackBar.open('Order placed successfully', 'Close', { duration: 3000 });
+      next: (res: any) => {
+        const invoice = res?.invoiceDate;
+        const message = invoice
+          ? `Order placed successfully (Invoice: ${invoice})`
+          : 'Order placed successfully';
+        this.snackBar.open(message, 'Close', { duration: 3000 });
+        this.invoiceDate = invoice;
         this.router.navigate(['/products']);
       },
       error: (err) => {
@@ -138,6 +164,20 @@ export class CheckoutComponent implements OnInit {
         this.snackBar.open('Failed to place order', 'Close', { duration: 3000 });
       }
     });
+  }
+
+  private noFutureDateValidator(max: Date): ValidatorFn {
+    return (control: AbstractControl) => {
+      if (!control.value) {
+        return null;
+      }
+      const value = control.value instanceof Date ? control.value : new Date(control.value);
+      return value > max ? { futureDate: true } : null;
+    };
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
   }
 
   /**

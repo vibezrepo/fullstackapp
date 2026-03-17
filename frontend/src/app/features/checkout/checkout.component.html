@@ -61,6 +61,26 @@
                 Country is required
               </mat-error>
             </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Pick date</mat-label>
+              <input matInput [matDatepicker]="pickDatePicker" formControlName="pickDate" [max]="maxDate" />
+              <mat-datepicker-toggle matSuffix [for]="pickDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #pickDatePicker></mat-datepicker>
+              <mat-error *ngIf="addressForm.controls['pickDate'].hasError('futureDate')">
+                Date cannot be in the future
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Delivery date</mat-label>
+              <input matInput [matDatepicker]="deliveryDatePicker" formControlName="deliveryDate" [max]="maxDate" />
+              <mat-datepicker-toggle matSuffix [for]="deliveryDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #deliveryDatePicker></mat-datepicker>
+              <mat-error *ngIf="addressForm.controls['deliveryDate'].hasError('futureDate')">
+                Date cannot be in the future
+              </mat-error>
+            </mat-form-field>
           </div>
 
           <div class="step-buttons">

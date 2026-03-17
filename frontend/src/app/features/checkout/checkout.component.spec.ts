@@ -89,6 +89,44 @@ describe('CheckoutComponent', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/products']);
   });
 
+  it('includes pickDate and deliveryDate in payload when set', () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    component.addressForm = fb.group({
+      name: ['John'], street: ['X'], city: ['C'], state: ['S'], zip: ['123'], country: ['Country'],
+      pickDate: [today],
+      deliveryDate: [tomorrow]
+    });
+
+    component.paymentForm = fb.group({ method: ['cod'], cardNumber: [''], cardExpiry: [''], cardCvv: [''] });
+
+    component.confirmOrder();
+
+    const expectedPickDate = today.toISOString().split('T')[0];
+    const expectedDeliveryDate = tomorrow.toISOString().split('T')[0];
+
+    expect(checkoutServiceSpy.confirmOrder).toHaveBeenCalledWith({
+      address: component.addressForm.value,
+      paymentMethod: 'cod',
+      pickDate: expectedPickDate,
+      deliveryDate: expectedDeliveryDate
+    });
+  });
+
+  it('validates that pickDate and deliveryDate cannot be in the future', () => {
+    const future = new Date();
+    future.setDate(future.getDate() + 5);
+
+    component.ngOnInit();
+    component.addressForm.get('pickDate')?.setValue(future);
+    component.addressForm.get('deliveryDate')?.setValue(future);
+
+    expect(component.addressForm.get('pickDate')?.hasError('futureDate')).toBeTrue();
+    expect(component.addressForm.get('deliveryDate')?.hasError('futureDate')).toBeTrue();
+  });
+
   it('requires card details when card payment selected and includes them in payload', () => {
     component.addressForm = fb.group({
       name: ['Alice'], street: ['Y'], city: ['Z'], state: ['T'], zip: ['456'], country: ['Country']
@@ -110,7 +148,11 @@ describe('CheckoutComponent', () => {
   });
 
   it('payment form invalid when card selected but details missing', () => {
-    component.paymentForm = fb.group({ method: ['card'], cardNumber: [''], cardExpiry: [''], cardCvv: [''] });
+    component.ngOnInit();
+    component.paymentForm.get('method')?.setValue('card');
+    component.paymentForm.get('cardNumber')?.setValue('');
+    component.paymentForm.get('cardExpiry')?.setValue('');
+    component.paymentForm.get('cardCvv')?.setValue('');
     expect(component.paymentForm.invalid).toBeTrue();
   });
   it('shows error snackbar when checkout fails', () => {

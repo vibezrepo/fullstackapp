@@ -31,6 +31,10 @@ import { CartService } from '../../../features/cart/services/cart.service';
         Products
       </button>
 
+      <button mat-button routerLink="/orders" *ngIf="isLoggedIn$ | async">
+        My Orders
+      </button>
+
       <button mat-button routerLink="/" *ngIf="isLoggedIn$ | async">
         About
       </button>

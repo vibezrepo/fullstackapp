@@ -5,9 +5,17 @@ import java.util.List;
 
 @Data
 public class OrderSummaryDto {
+    private Long id;
     private String userEmail;
     private AddressDto address;
     private String paymentMethod;
+    private String status;
+
+    // Order dates
+    private String pickDate;
+    private String deliveryDate;
+    private String invoiceDate;
+
     private String cardLast4;
     private String cardExpiry;
     private List<OrderItemSummaryDto> items;
